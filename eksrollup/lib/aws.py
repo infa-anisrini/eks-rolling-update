@@ -139,11 +139,11 @@ def modify_aws_autoscaling(asg_name, action):
         if action == "suspend":
             response = client.suspend_processes(
                 AutoScalingGroupName=asg_name,
-                ScalingProcesses=['Launch', 'ReplaceUnhealthy'])
+                ScalingProcesses=['Launch', 'ReplaceUnhealthy', 'AZRebalance'])
         elif action == "resume":
             response = client.resume_processes(
                 AutoScalingGroupName=asg_name,
-                ScalingProcesses=['Launch', 'ReplaceUnhealthy'])
+                ScalingProcesses=['Launch', 'ReplaceUnhealthy', 'AZRebalance'])
         else:
             logger.info('Invalid scaling option')
             raise Exception('Invalid scaling option')
