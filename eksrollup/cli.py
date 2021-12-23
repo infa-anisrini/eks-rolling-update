@@ -242,7 +242,7 @@ def update_asgs(asgs, cluster_name):
                 # get the k8s node name instead of instance id
                 node_name = get_node_by_instance_id(k8s_nodes, outdated['InstanceId'])
                 desired_asg_capacity -= 1
-                import pdb; pdb.set_trace()
+                #import pdb; pdb.set_trace()
                 elb_list=registered_elb_list(instance_id=outdated['InstanceId'])
                 drain_node(node_name)
                 while len(elb_list) !=0:

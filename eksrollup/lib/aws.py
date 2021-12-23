@@ -446,6 +446,7 @@ def registered_elb_list(instance_id):
     lbs = elb.describe_load_balancers()
     for lb in lbs['LoadBalancerDescriptions']:
         for  instance in lb['Instances']:
+            logger.info("Matching {} with lb instance: {}".format(instance_id, instance))
             if instance['InstanceId'] == instance_id:
                 registered_elb_list.append(lb['LoadBalancerName'])
     logger.info('Instance {} is registered to ELBs : {}'.format(instance_id,registered_elb_list))
