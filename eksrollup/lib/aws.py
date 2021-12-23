@@ -17,6 +17,12 @@ def get_all_asgs(cluster_tag):
     return get_asgs(cluster_tag, [])
 
 
+def remove_instance_from_elb(elb):
+    # get the aws ec2 instance id for the current machine
+    instance_id = boto3.utils.get_instance_metadata()['instance-id']
+    if instance_id in [i.id for i in elb.instances]:
+        elb.deregister_instances(instance_id)
+
 def get_asgs(cluster_tag, asg_names=app_config['ASG_NAMES']):
     """
     Queries AWS and find ASG's matching kubernetes.io/cluster/<cluster_tag> = owned
@@ -449,10 +455,10 @@ def deregister_check(instance_id, registered_elb_list):
     Checks if the Instance is OutOfService from the ELB
     """
     for lb in registered_elb_list:
+        remove_instance_from_elb(lb)
         if elb.describe_instance_health(LoadBalancerName=lb, \
             Instances=[{'InstanceId': instance_id}])['InstanceStates'][0]['State'] == 'OutOfService':
             logger.info('Instance {} is {} from ELB {}, checking again...'.format(instance_id,\
                 elb.describe_instance_health(LoadBalancerName=lb, \
                 Instances=[{'InstanceId': instance_id}])['InstanceStates'][0]['State'],lb))
             registered_elb_list.remove(lb)
-

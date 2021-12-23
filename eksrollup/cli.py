@@ -202,7 +202,7 @@ def update_asgs(asgs, cluster_name):
         verify_mdm_clusters(cluster_name=cluster_name)
     else:
         logger.info("Disabling mdm cluster check as SKIP_MDM_CHECK env is set to True.")
-        
+
     # Drain, Delete and Terminate the outdated nodes and return the ASGs back to their original state
     for asg_name, asg_tuple in asg_outdated_instance_dict.items():
         outdated_instances, asg = asg_tuple
