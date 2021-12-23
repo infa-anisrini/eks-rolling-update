@@ -21,6 +21,7 @@ def remove_instance_from_elb(elb):
     # get the aws ec2 instance id for the current machine
     instance_id = boto3.utils.get_instance_metadata()['instance-id']
     if instance_id in [i.id for i in elb.instances]:
+        logger.info('Removing {} from elb {}'.format(instance_id, elb))
         elb.deregister_instances(instance_id)
 
 def get_asgs(cluster_tag, asg_names=app_config['ASG_NAMES']):
