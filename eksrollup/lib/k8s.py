@@ -128,8 +128,9 @@ def add_node_labels(node_name):
     logger.info("Adding labels {} to k8s node {}...".format(body, node_name))
     try:
         api_response = k8s_api.patch_node(node_name, body)
+        logger.info("Added labels to k8s node {} successfully...".format(node_name))
     except ApiException as e:
-        logger.info("Exception when adding labels to node {} : {}".format(node_name, e))
+        logger.error("Exception when adding labels to node {} : {}".format(node_name, e))
 
 
 def cordon_node(node_name):
