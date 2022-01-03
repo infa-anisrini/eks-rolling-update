@@ -109,6 +109,26 @@ def delete_node(node_name):
     except ApiException as e:
         logger.info("Exception when calling CoreV1Api->delete_node: {}".format(e))
 
+def add_node_labels(node_name, labels_meta_data):
+    """
+    Add labels to a kubernetes node.
+    """
+
+    ensure_config_loaded()
+
+    # create an instance of the API class
+    k8s_api = client.CoreV1Api()
+    body = labels_meta_data
+    logger.info("Adding labels {} to k8s node {}...".format(body, node_name))
+    try:
+        if not app_config['DRY_RUN']:
+            k8s_api.patch_node(node_name, body)
+        else:
+            k8s_api.patch_node(node_name, body, dry_run=True)
+        logger.info("Added labels to k8s node {} successfully...".format(node_name))
+    except ApiException as e:
+        logger.error("Exception when adding labels to node {} : {}".format(node_name, e))
+
 
 def cordon_node(node_name):
     """
