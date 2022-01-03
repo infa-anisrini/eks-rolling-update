@@ -142,6 +142,17 @@ def scale_up_asg(cluster_name, asg, count):
     logger.info('Proceeding with node draining and termination...')
     return desired_capacity, asg_old_desired_capacity, asg_old_max_size
 
+def remove_node_from_lb(node_name):
+    # https://github.com/kubernetes/kubernetes/pull/95519
+    labels_meta_data = {
+        "metadata": {
+            "labels": {
+                "node.kubernetes.io/exclude-from-external-load-balancers": "true"
+                }
+        }
+    }
+    add_node_labels(node_name, labels_meta_data)
+
 
 def verify_mdm_clusters(cluster_name):
     if cluster_name.startswith("mdmcloud"):
@@ -244,7 +255,7 @@ def update_asgs(asgs, cluster_name):
                 desired_asg_capacity -= 1
                 elb_list=registered_elb_list(instance_id=outdated['InstanceId'])
                 # Add labels to the nodes
-                add_node_labels(node_name)
+                remove_node_from_lb(node_name)
                 drain_node(node_name)
                 while len(elb_list) !=0:
                     deregister_check(instance_id=outdated['InstanceId'], registered_elb_list=elb_list)
