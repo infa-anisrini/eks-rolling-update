@@ -142,7 +142,8 @@ def scale_up_asg(cluster_name, asg, count):
     logger.info('Proceeding with node draining and termination...')
     return desired_capacity, asg_old_desired_capacity, asg_old_max_size
 
-def remove_node_from_lb(node_name):
+def remove_node_from_elb(node_name):
+    # Add labels to the nodes
     # https://github.com/kubernetes/kubernetes/pull/95519
     labels_meta_data = {
         "metadata": {
@@ -254,8 +255,7 @@ def update_asgs(asgs, cluster_name):
                 node_name = get_node_by_instance_id(k8s_nodes, outdated['InstanceId'])
                 desired_asg_capacity -= 1
                 elb_list=registered_elb_list(instance_id=outdated['InstanceId'])
-                # Add labels to the nodes
-                remove_node_from_lb(node_name)
+                remove_node_from_elb(node_name)
                 drain_node(node_name)
                 while len(elb_list) !=0:
                     deregister_check(instance_id=outdated['InstanceId'], registered_elb_list=elb_list)
